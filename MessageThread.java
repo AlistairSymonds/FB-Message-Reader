@@ -9,7 +9,7 @@ import java.io.*;
 public class MessageThread {
 	private ArrayList<Message> messages;
 	private static int threadNumber;
-	private static SimpleDateFormat ft = new SimpleDateFormat("yyyyMMdd");
+	private static SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat printFt = new SimpleDateFormat("kk:mm 'on' dd MMMM yyyy z");
 	private ArrayList<String> participants = new ArrayList<String>();
 	private static String User;
@@ -49,6 +49,10 @@ public class MessageThread {
 	
 	private void printMsgToFile(File file, Message msg){
 		
+	}
+	
+	public static int getThreadNumber(){
+		return threadNumber;
 	}
 	
 	public void printThreadToFile(){

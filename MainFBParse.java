@@ -1,11 +1,27 @@
 //package src.fbParser;
 import java.io.*;
 import java.util.*;
+import java.nio.file.*;
 
 public class MainFBParse {
-	static public File file = new File("messages.txt");
+	static public File file = new File("messages.htm");
 	
 	public static void main (String args[]){
+		
+		long startTime = System.nanoTime();
+		
+		Path currentDir = Paths.get("");
+		String strPath = currentDir.toAbsolutePath().toString();
+		strPath = strPath + "/threads";
+		Path p = Paths.get(strPath);
+		
+		try{
+			Files.createDirectories(p);
+		} catch (Exception e){
+			System.out.println("uh... exception");
+		}
+
+		
 		Scanner scan = null;
 		BufferedReader br = null;
 		FileReader fr = null;
@@ -91,6 +107,10 @@ public class MainFBParse {
 			while(threadTagOpen){
 				
 				//user tag, meta tag, message text
+				if(scan.hasNext() == false){
+					thread.printThreadToFile();
+					break inThread;
+				}
 				
 				String Sender = "";
 				input = scan.next();
@@ -180,6 +200,11 @@ public class MainFBParse {
 					}
 				}							
 			}
-		}	
+		}
+		
+		long endTime = System.nanoTime();
+		long timeTaken = endTime - startTime;
+		double timeTakenSeconds = timeTaken * Math.pow(10, 9);
+		System.out.println("Scanned and outputted " + MessageThread.getThreadNumber() + " threads in " +  timeTakenSeconds + " [s]");
 	}
 }
