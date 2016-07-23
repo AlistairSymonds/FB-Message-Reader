@@ -1,6 +1,9 @@
 # FB-Message-Reader
 A java program designed to take input from the messages.htm (found when you download a copy of your fb profile)  file and output it in a more human readable manner.
 
+If you just want to use the prgram and read your messages easily, please click on the following link:
+https://sayfog.github.io/FB-Message-Reader/
+
 
 Why a new program when other options exists? 
 Well the only two other options I've found are python based and using the beautiful soup library, whilst this does have many advantages with being more general, it had two main problems in my experience.
