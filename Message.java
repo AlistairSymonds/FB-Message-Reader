@@ -1,4 +1,4 @@
-package fbMessageReader;
+package fbMessageReaderGUI;
 import java.text.*;
 import java.util.*;
 public class Message {
