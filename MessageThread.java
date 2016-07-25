@@ -1,4 +1,4 @@
-//package src.fbParser;
+package fbMessageReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

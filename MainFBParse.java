@@ -1,4 +1,4 @@
-//package src.fbParser;
+package fbMessageReader;
 import java.io.*;
 import java.util.*;
 import java.nio.file.*;
@@ -17,8 +17,10 @@ public class MainFBParse {
 		
 		try{
 			Files.createDirectories(p);
+		} catch (SecurityException e){
+			System.out.println("Security Exception, try running elevated or in a different directory");
 		} catch (Exception e){
-			System.out.println("uh... exception");
+			System.out.println(e.toString());
 		}
 
 		
@@ -29,7 +31,7 @@ public class MainFBParse {
 		
 		try{
 			if(args.length == 0){
-				System.out.println("no file specified, expecting to find messages.htm in directory as executable");
+				//System.out.println("no file specified, expecting to find messages.htm in directory as executable");
 			} else {
 				System.out.println("Using file: " + args[0]);
 				file = new File(args[0]);
@@ -39,8 +41,16 @@ public class MainFBParse {
 			scan = new Scanner(br);
 			
 		} catch (Exception e){
-			System.out.println("EXCEPTION! Most likely file not found");
+			System.out.println("Couldn't find messages.htm in the same folder as this program");
+			System.out.println("Press ENTER to close");
+			
+			try{
+	            System.in.read();
+	        }catch(Exception e2){
+	        	System.exit(0);
+	        }
 			System.exit(0);
+
 		}
 		
 		
@@ -202,9 +212,23 @@ public class MainFBParse {
 			}
 		}
 		
+		
 		long endTime = System.nanoTime();
 		long timeTaken = endTime - startTime;
 		double timeTakenSeconds = timeTaken * Math.pow(10, 9);
 		System.out.println("Scanned and outputted " + MessageThread.getThreadNumber() + " threads in " +  timeTakenSeconds + " [s]");
+		System.out.println("Press ENTER to close");
+		
+		try
+        {
+            System.in.read();
+        }  
+        catch(Exception e){
+        	System.exit(0);
+        }
+		System.exit(0);
+		
+		
+		
 	}
 }
