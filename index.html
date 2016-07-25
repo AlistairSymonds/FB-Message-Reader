@@ -29,49 +29,34 @@
 
 <ul>
 <li>Your messages.htm file (found in your profile download .zip from facebook)</li>
-<li><p>The FB-Message-Reader.jar file to run the program</p></li>
+<li><p>The program itself (found at the top of this page)</p></li>
 </ul>
 
-<ol>
-<li>Put these two files in the same directory </li>
-</ol>
+<p>Then it's simply a case of selecting your messages file and waiting for the program to complete</p>
+<p>Now you should find your message threads in the "threads" folder with the application</p>
+<p>NOTE: currently the mac version creates the threads folder in your base user folder (home directory)</p>
 
-<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/jar_messages.PNG" alt="Step one"></p>
-
-<ol>
-<li>
-<p>Open a terminal/cmd window in same directory (on windows: shift right click, then select "Open command window here") and type in the following command </p>
-
-<p><strong>java -jar FB-Message-Reader.jar</strong></p>
-</li>
-</ol>
-
-<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/command.PNG" alt="Step two"></p>
-
-<ol>
-<li>Sit back watch the magic happen, hopefully now you will see all the text files the program is creating fly past on the screen before finishing telling you how long it took and how many message threads it read. (Note: Facebook creates a new thread every 10000 messages, this is why you may have multiple threads with the same person/people)</li>
-</ol>
-
-<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/run.PNG" alt="Step three"></p>
-
-<h3>
 <a id="making-sense-of-the-results" class="anchor" href="#making-sense-of-the-results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Making sense of the results</h3>
 
 <p>Each file name takes one of three formats:</p>
 
 <ol>
 <li><p>EMPTY THREAD - Simply a message thread which didn't contain any messages</p></li>
+<br>
 <li><p><em>first name last name</em> - A two person conversation, just listing the other person's name</p></li>
+<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/two_person_output.PNG" alt="Two Person Thread"></p>
+<br>
 <li><p>Group <em>multiple initials</em> - A group conversation, instead of listing full names it just lists initials in the file name to avoid ridiculously long names</p></li>
+<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/group_output.PNG" alt="Group Thread"></p>
 </ol>
 
 <p>At the end of each file is a number which is simply where the thread was in the original messages.htm file</p>
 
 <p>For non-empty message threads it also lists the date of the last message in that thread.</p>
 
-<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/group_output.PNG" alt="Group Thread"></p>
 
-<p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/two_person_output.PNG" alt="Two Person Thread"></p>
+
+
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Sayfog/FB-Message-Reader">FB Message Reader</a> is maintained by <a href="https://github.com/Sayfog">Sayfog</a>.</span>
