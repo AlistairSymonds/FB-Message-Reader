@@ -23,11 +23,17 @@ public class AllMessages {
 	}
 	
 	public void generateStats(){
-		//printConvos();
 		printConvoNumbers();
 		createStatsDirs();	
+		
 		generateDailyHotspots();
-		System.out.println("No of convos " + allConvos.size());
+		generateWeeklyHotspots();
+		
+		generateAvgMsgLength();
+		for(int i = 0; i< allConvos.size(); i++){
+			allConvos.get(i).generateMsgAvgLengths();
+		}
+		
 		for(int i = 0; i < allConvos.size(); i++){
 			allConvos.get(i).generateDailyHotspots();
 		}
@@ -134,15 +140,49 @@ public class AllMessages {
 		}
 		return true;
 	}
+	public void generateAvgMsgLength(){
+		long totalUserMsgWords = 0;
+		long totalUserMsgs = 0;
+		
+		long totalOtherMsgWords = 0;
+		long totalOtherMsgs = 0;
+		
+		for(int i = 0; i < allConvos.size(); i++){// iterate through conversations
+			for(int j = 0; j < allConvos.get(i).getThreads().size(); j++){//iterate through threads in i'th conversation
+				for(int k = 0; k < allConvos.get(i).getThreads().get(j).getMessageCount(); k++){
+					Message msg = allConvos.get(i).getThreads().get(j).getMessage(k);
+					if(msg.getSender().contains(user)){
+						totalUserMsgWords = totalUserMsgWords + msg.getText().split(" ").length;
+						totalUserMsgs++;
+					} else {
+						totalOtherMsgWords = totalOtherMsgWords + msg.getText().split(" ").length;
+						totalOtherMsgs++;
+					}
+					
+				}
+			}
+		}
+		
+		PrintWriter writer = null;
+		createStatsDirs("/ALL MESSAGES/");
+		String fileName = "fb-messages/stats/ALL MESSAGES/Message Length Averages.csv";
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.print(user + "'s average message length," + (totalUserMsgWords/totalUserMsgs));
+			
+			writer.println();
+			writer.print("Other's average message length," + totalOtherMsgWords/totalUserMsgs);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		writer.close();
+	}
 	
 	public void generateDailyHotspots(){
 		Calendar cal; 
-		long userMsgs15min[] = new long[96];
 		long userMsgsHr[] = new long[24];
-		long userMsgs5min[] = new long[288];
-		long otherMsgs15min[] = new long[96];
 		long otherMsgsHr[] = new long[24];
-		long otherMsgs5min[] = new long[288];
+
 		
 		for(int i = 0; i < allConvos.size(); i++){// iterate through conversations
 			for(int j = 0; j < allConvos.get(i).getThreads().size(); j++){//iterate through threads in i'th conversation
@@ -169,8 +209,8 @@ public class AllMessages {
 		}
 		
 		PrintWriter writer = null;
-		createStatsDirs("/all messages/");
-		String fileName = "fb-messages/stats/all messages/Daily Hourly Hotspot.csv";
+		createStatsDirs("/ALL MESSAGES/");
+		String fileName = "fb-messages/stats/ALL MESSAGES/Day Hourly Hotspot.csv";
 		try{
 			writer = new PrintWriter(new File(fileName));
 			writer.print(user + "'s messages per hour over 24hr");
@@ -195,6 +235,63 @@ public class AllMessages {
 	}
 	
 	public void generateWeeklyHotspots(){
+		Calendar cal;
+		long userMsgsHr[] = new long[24*7];
+		long otherMsgsHr[] = new long[24*7];
+		for(int i = 0; i < allConvos.size(); i++){// iterate through conversations
+			for(int j = 0; j < allConvos.get(i).getThreads().size(); j++){//iterate through threads in i'th conversation
+				for(int k = 0; k < allConvos.get(i).getThreads().get(j).getMessageCount(); k++){
+					Message msg = allConvos.get(i).getThreads().get(j).getMessage(k);
+					cal = Calendar.getInstance(TimeZone.getTimeZone(msg.getStrTZ()));
+					
+					cal.setTime(msg.getDate());
+					if(msg.getSender().contains(user)){
+						userMsgsHr[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
+					} else {
+						otherMsgsHr[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
+					}
+				}
+			}
+		}
+		PrintWriter writer = null;
+		createStatsDirs("/ALL MESSAGES/");
+		String fileName = "fb-messages/stats/ALL MESSAGES/Week Hourly Hotspot.csv";
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.print(user.split(" ")[0] + "'s messages per hour over 24hr");
+			for(int i = 0; i < userMsgsHr.length; i++){
+				writer.print(","+userMsgsHr[i]);
+			}
+			writer.println();
+			writer.print("Other's messages per hour over 24hr");
+			for(int i = 0; i < otherMsgsHr.length; i++){
+				writer.print(","+otherMsgsHr[i]);
+			}
+			
+			
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		writer.close();
 		
+	}
+	
+	private int dayOfWeekToInt(String dayStr){
+		if (dayStr.equals("MONDAY")){
+			return 0;
+		} else if (dayStr.equals("TUESDAY")){
+			return 1;
+		}else if (dayStr.equals("WEDNESDAY")){
+			return 2;
+		}else if (dayStr.equals("THURSDAY")){
+			return 3;
+		}else if (dayStr.equals("FRIDAY")){
+			return 4;
+		}else if (dayStr.equals("SATURDAY")){
+			return 5;
+		} else{
+			return 6;
+		}
 	}
 }
