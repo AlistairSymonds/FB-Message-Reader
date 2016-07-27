@@ -1,5 +1,6 @@
 package fbMessageReaderGUI;
 
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,10 +11,14 @@ import java.util.TimeZone;
 
 public class AllMessages {
 	private ArrayList<Conversation> allConvos = new ArrayList<Conversation>();
-	private String user;
+	private static String user;
 	
 	public AllMessages (String userIn){
-		this.user = userIn;
+		user = userIn;
+	}
+	
+	public static String getUser(){
+		return user;
 	}
 	
 	public void generateStats(){
@@ -21,6 +26,9 @@ public class AllMessages {
 		printConvoNumbers();
 		createStatsDirs();	
 		generateDailyHotspots();
+		for(int i = 0; i < allConvos.size(); i++){
+			allConvos.get(i).generateDailyHotspots();
+		}
 	}
 	
 	public ArrayList<Conversation> getConvos(){
@@ -58,7 +66,7 @@ public class AllMessages {
 		}
 	}
 	
-	private void createStatsDirs(){
+	public static void createStatsDirs(){
 		Path currentDir = Paths.get("");
 		String strPath = currentDir.toAbsolutePath().toString();
 		strPath = strPath + "/fb-messages/stats";
@@ -74,7 +82,7 @@ public class AllMessages {
 		p = Paths.get(strPath);
 	}
 	
-	private void createStatsDirs(String input){
+	public static void createStatsDirs(String input){
 		Path currentDir = Paths.get("");
 		String strPath = currentDir.toAbsolutePath().toString();
 		strPath = strPath + "/fb-messages/stats" + input;
@@ -155,6 +163,9 @@ public class AllMessages {
 		for(int i = 0; i < 24; i++){
 			System.out.println(otherMsgsHr[i]);
 		}
+		
+		PrintWriter writer = null;
+		
 		
 	}
 	
