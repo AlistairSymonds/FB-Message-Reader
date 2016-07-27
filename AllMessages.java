@@ -1,5 +1,6 @@
 package fbMessageReaderGUI;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,7 @@ public class AllMessages {
 		printConvoNumbers();
 		createStatsDirs();	
 		generateDailyHotspots();
+		System.out.println("No of convos " + allConvos.size());
 		for(int i = 0; i < allConvos.size(); i++){
 			allConvos.get(i).generateDailyHotspots();
 		}
@@ -62,6 +64,7 @@ public class AllMessages {
 		if(convoExists == false){
 			System.out.println("Creating new convo for " + thread.getParticipants());
 			Conversation con = new Conversation(thread.getParticipants());
+			con.addMessageThread(thread);
 			allConvos.add(con);
 		}
 	}
@@ -86,6 +89,7 @@ public class AllMessages {
 		Path currentDir = Paths.get("");
 		String strPath = currentDir.toAbsolutePath().toString();
 		strPath = strPath + "/fb-messages/stats" + input;
+		System.out.println("Making dir " + strPath);
 		Path p = Paths.get(strPath);
 		try{
 			Files.createDirectories(p);
@@ -165,6 +169,27 @@ public class AllMessages {
 		}
 		
 		PrintWriter writer = null;
+		createStatsDirs("/all messages/");
+		String fileName = "fb-messages/stats/all messages/Daily Hourly Hotspot.csv";
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.print(user + "'s messages per hour over 24hr");
+			for(int i = 0; i < 24; i++){
+				writer.print(","+userMsgsHr[i]);
+			}
+			writer.println();
+			writer.print("Other's messages per hour over 24hr");
+			for(int i = 0; i < 24; i++){
+				writer.print(","+otherMsgsHr[i]);
+			}
+			
+			
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		writer.close();
 		
 		
 	}

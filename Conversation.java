@@ -34,6 +34,7 @@ public class Conversation {
 	}
 	
 	public void generateDailyHotspots(){
+		
 		if (threads.isEmpty()){
 			return;
 		}
@@ -42,6 +43,7 @@ public class Conversation {
 		String fName = createFileName();
 		AllMessages.createStatsDirs("/" + fName);
 		String fileName = "fb-messages/stats/" + fName + "/Hourly Daily Hotspots.csv";
+		
 		for(int i = 0; i < threads.size(); i++){
 			for(int k = 0; k < threads.get(i).getMessageCount(); k++){
 				Message msg = threads.get(i).getMessage(k);
@@ -59,6 +61,15 @@ public class Conversation {
 		PrintWriter writer = null;
 		try{
 			writer = new PrintWriter(new File(fileName));
+			writer.print(user + "'s messages per hour over 24hr");
+			for(int i = 0; i < 24; i++){
+				writer.print(","+userMsgsHr[i]);
+			}
+			writer.println();
+			writer.print("Other's messages per hour over 24hr");
+			for(int i = 0; i < 24; i++){
+				writer.print(","+otherMsgsHr[i]);
+			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -85,6 +96,7 @@ public class Conversation {
 			for (int i = 0; i < participants.size(); i++){
 				partsString = partsString + " " + this.participants.get(i);
 			}
+			partsString = partsString.substring(1);
 		}
 		
 		return partsString;
