@@ -14,6 +14,7 @@ public class Message {
 		this.Sender = Sender;
 	}
 	
+	
 	public String getSender(){
 		return this.Sender;
 	}
@@ -28,6 +29,15 @@ public class Message {
 		text = text.replaceAll(quoteMark, "\"");
 		
 		this.messageText = text;
+	}
+	
+	public String getStrDate(){
+		return this.getStrDate();
+	}
+	
+	public String getStrTZ(){
+		SimpleDateFormat tz = new SimpleDateFormat("z");
+		return tz.format(msgDate);
 	}
 	
 	public void setDate(String dateIn){
@@ -51,7 +61,6 @@ public class Message {
 	}
 	
 	public void printMsgToConsole(){
-		int width = 6;
 		String msgTextSplit[] = this.messageText.split(" ");
 		System.out.println("############################");
 		System.out.println("Sender: " + Sender);

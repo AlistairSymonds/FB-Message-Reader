@@ -47,20 +47,18 @@ public class MessageThread {
 		return messages.get(index);
 	}
 	
-	private void printMsgToFile(File file, Message msg){
-		
-	}
-	
 	public static int getThreadNumber(){
 		return threadNumber;
+	}
+	
+	public ArrayList<String> getParticipants(){
+		return this.participants;
 	}
 	
 	public void printThreadToFile(){
 		String printDate;
 		String fileName;
 		String partsString = "";
-		boolean isGroupThread = false;
-		
 		for(int i = 0; i < participants.size(); i++){
 			participants.set(i,  participants.get(i).trim());
 		}
@@ -72,7 +70,6 @@ public class MessageThread {
 			}
 			partsString = partsString.trim();
 			partsString = "qGroup " + partsString;
-			isGroupThread = true;
 		} else {
 			for (int i = 0; i < participants.size(); i++){
 				partsString = partsString + " " + this.participants.get(i);
@@ -84,9 +81,9 @@ public class MessageThread {
 			printDate = ft.format(messages.get(0).getDate());
 			fileName = partsString + " " + printDate + "_" + threadNumber + ".txt";
 			fileName = fileName.substring(1);
-			fileName = "threads/" + fileName;
+			fileName = "fb-messages/threads/" + fileName;
 		} else{
-			fileName = "threads/EMPTY THREAD " + threadNumber + ".txt";
+			fileName = "fb-messages/threads/EMPTY THREAD " + threadNumber + ".txt";
 		}
 		
 		
@@ -116,6 +113,10 @@ public class MessageThread {
 		} catch (Exception e){
 			System.out.println(e.toString());
 		}
+	}
+
+	public int getMessageCount() {
+		return messages.size();
 	}
 	
 }

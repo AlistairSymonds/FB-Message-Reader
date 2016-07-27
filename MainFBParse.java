@@ -5,15 +5,17 @@ import java.nio.file.*;
 
 public class MainFBParse {
 	
-	public static String scanAll (String filePath){
+	public static String scanAll (String filePath, boolean generateStats){
+		
+		generateStats = true;
 		
 		File file = new File(filePath);
 		
-		long startTime = System.nanoTime();
+		long startTime = System.currentTimeMillis();
 		
 		Path currentDir = Paths.get("");
 		String strPath = currentDir.toAbsolutePath().toString();
-		strPath = strPath + "/threads";
+		strPath = strPath + "/fb-messages/threads";
 		Path p = Paths.get(strPath);
 		
 		try{
@@ -57,7 +59,6 @@ public class MainFBParse {
 		boolean threadTagOpen = false;
 		boolean userTagOpen = false;
 		boolean metaTagOpen = false;
-		boolean breakOut = false;
 		boolean participantsOpen = false;
 		String User = "";
 		
@@ -75,6 +76,7 @@ public class MainFBParse {
 		User = User.substring(1, cutIndex);
 		System.out.println("User is: " + User);
 		
+		AllMessages allMsgs = new AllMessages(User);
 		MessageThread.setUser(User);
 		
 		
@@ -106,6 +108,10 @@ public class MainFBParse {
 
 		MessageThread thread = new MessageThread(StartparticipantsSplit);
 		
+		if(generateStats){
+			allMsgs.addThread(thread);
+		}
+		
 		while(scan.hasNext() == true){
 			
 			
@@ -116,6 +122,9 @@ public class MainFBParse {
 				//user tag, meta tag, message text
 				if(scan.hasNext() == false){
 					thread.printThreadToFile();
+					if(generateStats){
+						allMsgs.addThread(thread);
+					}
 					break inThread;
 				}
 				
@@ -125,6 +134,11 @@ public class MainFBParse {
 				if(input.contains("class=\"thread\">")){
 					participantsOpen = true;
 					thread.printThreadToFile();
+					if(generateStats){
+						allMsgs.addThread(thread);
+					}
+					
+					
 					String participants = input.substring(15);
 					
 					while(participantsOpen){
@@ -210,13 +224,24 @@ public class MainFBParse {
 		}
 		
 		
-		long endTime = System.nanoTime();
+		
+		if(generateStats){
+			System.out.println("generating stats");
+			allMsgs.generateStats();
+		}
+		
+		
+		long endTime = System.currentTimeMillis();
 		long timeTaken = endTime - startTime;
-		double timeTakenSeconds = timeTaken * Math.pow(10, 9);
+		double timeTakenSeconds = timeTaken * Math.pow(10, 4);
 		String output = ("Scanned and outputted " + MessageThread.getThreadNumber() + " threads in " +  timeTakenSeconds + " [s]");
-
+		
+		
+		
+		
 		return output;
 		
 		
 	}
+	
 }
