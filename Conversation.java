@@ -139,6 +139,27 @@ public class Conversation {
 			e.printStackTrace();
 		}
 		
+		fileName = "fb-messages/stats/" + fName + "/" + fName + "_daily per hr.csv";
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.print("user,");
+			for(int i = 0; i < 24; i++){
+				writer.print(i + ",");
+			}
+
+			for (String s : keys) {
+				writer.println();
+				writer.print(s + ",");			
+				long[] msgTimes = map.get(s).getDayHrMsgs();
+				for(int i = 0; i < msgTimes.length; i++){
+					writer.print(msgTimes[i] + ",");
+				}
+				
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		writer.close();
 		
 		
