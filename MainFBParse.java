@@ -233,8 +233,9 @@ public class MainFBParse {
 		
 		long endTime = System.currentTimeMillis();
 		long timeTaken = endTime - startTime;
-		double timeTakenSeconds = timeTaken * Math.pow(10, 4);
-		String output = ("Scanned and outputted " + MessageThread.getThreadNumber() + " threads in " +  timeTakenSeconds + " [s]");
+		double timeTakenSeconds = timeTaken * Math.pow(10, -3);
+		
+		String output = ("Scanned and outputted " + MessageThread.getThreadNumber() + " threads in " +  String.format("%.2f", timeTakenSeconds) + " [s]");
 		
 		
 		

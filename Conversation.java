@@ -63,14 +63,16 @@ public class Conversation {
 		
 		String fName = createFolderName();
 		AllMessages.createStatsDirs("/" + fName);
-		String fileName = "fb-messages/stats/" + fName + "/Average Message Length.csv";
+		String fileName = "fb-messages/stats/" + fName + "/" + fName + "_avg msg length.csv";
 		
 		PrintWriter writer = null;
 		try{
 			writer = new PrintWriter(new File(fileName));
+			writer.println("user, avg msg length, total messages, total word count");
 			for (String s : keys) {
 				writer.print(s + ",");
-				writer.println(map.get(s).getAvg());
+				writer.println(map.get(s).getAvg() + "," + map.get(s).msgCount + "," + map.get(s).wordTotal);
+				
 			}
 			
 		} catch (Exception e){
@@ -81,43 +83,57 @@ public class Conversation {
 		
 	}
 	
-	public void generateDailyHotspots(){
-
-		
+	public void generateHotspots(){
 		if (threads.isEmpty()){
 			return;
 		}
-		long userMsgsHr[] = new long[24];
-		long otherMsgsHr[] = new long[24];
-		String fName = createFolderName();
-		AllMessages.createStatsDirs("/" + fName);
-		String fileName = "fb-messages/stats/" + fName + "/Hourly Daily Hotspots.csv";
+
+		
+		HashMap<String, MessageTimes> map = new HashMap<String, MessageTimes>();
 		
 		for(int i = 0; i < threads.size(); i++){
-			for(int k = 0; k < threads.get(i).getMessageCount(); k++){
-				Message msg = threads.get(i).getMessage(k);
+			for(int j = 0; j < threads.get(i).getMessageCount(); j++){
+				Message msg = threads.get(i).getMessage(j);
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(msg.getStrTZ()));
-				
 				cal.setTime(msg.getDate());
-				if(msg.getSender().contains(user)){
-					userMsgsHr[cal.get(Calendar.HOUR_OF_DAY)]++;
-				} else {
-					otherMsgsHr[cal.get(Calendar.HOUR_OF_DAY)]++;
+				
+				if(map.get(msg.getSender()) != null){
+					MessageTimes existingTime = map.get(msg.getSender());
+					existingTime.weekHrMsgs[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
+					map.put(msg.getSender(), existingTime);
+				} else{
+					MessageTimes newTime = new MessageTimes(msg.getSender());
+					newTime.weekHrMsgs[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
+					map.put(msg.getSender(), newTime);
 				}
 			}
 		}
 		
+		
+		String fName = createFolderName();
+		AllMessages.createStatsDirs("/" + fName);
+		String fileName = "fb-messages/stats/" + fName + "/" + fName + "_weekly per hr.csv";
+		
+		Set<String> keys = map.keySet();
 		PrintWriter writer = null;
+		String daysOfWeek[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 		try{
 			writer = new PrintWriter(new File(fileName));
-			writer.print(user + "'s messages per hour over 24hr");
-			for(int i = 0; i < 24; i++){
-				writer.print(","+userMsgsHr[i]);
+			writer.print("user,");
+
+			for(int currentDay = 0; currentDay < 7; currentDay++){
+				for(int hour = 0; hour < 24; hour++){
+					writer.print(hour + " " + daysOfWeek[currentDay] + ",");
+				}
 			}
-			writer.println();
-			writer.print("Other's messages per hour over 24hr");
-			for(int i = 0; i < 24; i++){
-				writer.print(","+otherMsgsHr[i]);
+			for (String s : keys) {
+				writer.println();
+				writer.print(s + ",");			
+				long[] msgTimes = map.get(s).weekHrMsgs;
+				for(int i = 0; i < msgTimes.length; i++){
+					writer.print(msgTimes[i] + ",");
+				}
+				
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -163,6 +179,25 @@ class MessageCounts{
 	}
 	
 	public double getAvg(){
-		return wordTotal/msgCount;
+		double avg = (double)wordTotal/(double)msgCount;
+		return avg;
+	}
+}
+
+class MessageTimes{
+	public String User;
+	public long[] weekHrMsgs = new long[168];
+	
+	public MessageTimes(String user){
+		this.User = user;
+	}
+	
+	public long[] getDayHrMsgs(){
+		long[] dayHrMsgs = new long[24];
+		for(int i = 0; i < weekHrMsgs.length; i++){
+			dayHrMsgs[i%24] = dayHrMsgs[i%24] + weekHrMsgs[i];
+		}
+		
+		return dayHrMsgs;
 	}
 }

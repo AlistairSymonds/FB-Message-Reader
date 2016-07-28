@@ -35,7 +35,7 @@ public class AllMessages {
 		}
 		
 		for(int i = 0; i < allConvos.size(); i++){
-			allConvos.get(i).generateDailyHotspots();
+			allConvos.get(i).generateHotspots();
 		}
 	}
 	
