@@ -7,8 +7,7 @@ public class MainFBParse {
 	
 	public static String scanAll (String filePath, boolean generateStats){
 		
-		generateStats = true;
-		
+		MessageThread.setThreadCount(0);
 		File file = new File(filePath);
 		
 		long startTime = System.currentTimeMillis();

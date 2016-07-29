@@ -92,7 +92,7 @@ public class GUI {
 				} catch (NullPointerException e) {
 					System.out.println("File not selected");
 				}
-				statusText.setText("Parsing messages file, please be patient, this may take a minute...");
+				statusText.setText("Error in scanning, please close all open files outputted by the program");
 				String outDetails = MainFBParse.scanAll(filePath, createStatsToggle.isSelected());
 				statusText.setText(outDetails);
 			}
@@ -105,6 +105,7 @@ public class GUI {
 		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, 10, SpringLayout.WEST, frmFacebookMessageReader.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnNewButton, 31, SpringLayout.NORTH, frmFacebookMessageReader.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnNewButton, 145, SpringLayout.WEST, frmFacebookMessageReader.getContentPane());
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				

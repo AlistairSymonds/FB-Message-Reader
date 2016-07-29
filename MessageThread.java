@@ -54,6 +54,10 @@ public class MessageThread {
 		return this.participants;
 	}
 	
+	public static void setThreadCount(int num){
+		threadNumber = num;
+	}
+	
 	public void printThreadToFile(){
 		String printDate;
 		String fileName;
