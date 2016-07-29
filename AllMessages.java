@@ -7,7 +7,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class AllMessages {
@@ -37,6 +41,8 @@ public class AllMessages {
 		for(int i = 0; i < allConvos.size(); i++){
 			allConvos.get(i).generateHotspots();
 		}
+		
+		generateTopPeople();
 	}
 	
 	public ArrayList<Conversation> getConvos(){
@@ -107,6 +113,7 @@ public class AllMessages {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private void printConvos(){
 		System.out.println("Printing convos below...");
 		for (int i = 0; i < allConvos.size(); i++){
@@ -277,6 +284,52 @@ public class AllMessages {
 		
 	}
 	
+	public void generateTopPeople(){
+		
+		HashMap<String, MessageCounts> map = new HashMap<String, MessageCounts>();
+		for(int i = 0; i < allConvos.size(); i++){
+			
+			
+			HashMap<String, MessageCounts> tempMap = allConvos.get(i).getMsgLenMap();
+			Set<String> keys = tempMap.keySet();
+			
+			//combine maps
+			for (String s : keys) {
+				if(map.get(s) == null){
+					map.put(s, tempMap.get(s));
+				} else {
+					map.put(s, MessageCounts.addCounts(map.get(s), tempMap.get(s)));
+				}
+			}
+		}
+		Set<String> keys = map.keySet();
+		ArrayList<MessageCounts> counts = new ArrayList<MessageCounts>();
+		for(String s : keys){
+			counts.add(map.get(s));
+		}
+		Collections.sort(counts, new MsgTotalComparator());
+		Collections.sort(counts, new MsgTotalComparator());
+		Collections.sort(counts, new MsgTotalComparator());
+		Collections.sort(counts, new MsgTotalComparator());
+		Collections.sort(counts, new MsgTotalComparator());
+		
+		String fileName = "fb-messages/stats/ALL MESSAGES/total msgs by person.csv";
+		PrintWriter writer = null;
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.println("user,number of messages");
+			for(int i = 0; i < counts.size(); i++){
+				writer.println(counts.get(i).User+","+counts.get(i).msgTotal);
+			}
+			
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		writer.close();
+		
+		
+	}
 	private int dayOfWeekToInt(String dayStr){
 		if (dayStr.equals("MONDAY")){
 			return 0;
@@ -295,3 +348,4 @@ public class AllMessages {
 		}
 	}
 }
+

@@ -12,8 +12,8 @@ public class Conversation {
 	private ArrayList<String> participants = new ArrayList<String>();
 	private ArrayList<MessageThread> threads = new ArrayList<MessageThread>();
 	private static String user;
-	
-	
+	private HashMap<String, MessageTimes> hotspotMap = new HashMap<String, MessageTimes>();
+	private HashMap<String, MessageCounts> msgLenMap = new HashMap<String, MessageCounts>();
 	
 	public Conversation(ArrayList<String> partsIn){
 		for (int i = 0; i < partsIn.size(); i++){
@@ -22,6 +22,13 @@ public class Conversation {
 		user = AllMessages.getUser();
 	}
 	
+	public HashMap<String, MessageTimes> getHotspotMap(){
+		return this.hotspotMap;
+	}
+	
+	public HashMap<String, MessageCounts> getMsgLenMap(){
+		return this.msgLenMap;
+	}
 	
 	public ArrayList<String> getParticipants(){
 		return this.participants;
@@ -36,26 +43,35 @@ public class Conversation {
 	}
 	
 	public void generateMsgAvgLengths(){
-		HashMap<String, MessageCounts> map = new HashMap<String, MessageCounts>();
 		
 		for(int i = 0; i < threads.size(); i++){
 			for(int j = 0; j < threads.get(i).getMessageCount(); j++){
 				Message msg = threads.get(i).getMessage(j);
-				if(map.get(msg.getSender()) != null){
-					MessageCounts existingCount = map.get(msg.getSender());
-					existingCount.msgCount = existingCount.msgCount + 1;
+				if(msgLenMap.get(msg.getSender()) != null){
+					MessageCounts existingCount = msgLenMap.get(msg.getSender());
+					existingCount.msgTotal = existingCount.msgTotal + 1;
 					existingCount.wordTotal = existingCount.wordTotal + msg.getText().split(" ").length;
-					map.put(msg.getSender(), existingCount);
+					for(int k = 0; k < msg.getText().length(); k++){
+						if(!Character.isWhitespace(msg.getText().charAt(k))){
+							existingCount.charTotal++;
+						}
+					}
+					msgLenMap.put(msg.getSender(), existingCount);
 				} else{
 					MessageCounts newCount = new MessageCounts(msg.getSender());
-					newCount.msgCount = 1;
+					newCount.msgTotal = 1;
 					newCount.wordTotal = msg.getText().split(" ").length;
-					map.put(msg.getSender(), newCount);
+					for(int k = 0; k < msg.getText().length(); k++){
+						if(!Character.isWhitespace(msg.getText().charAt(k))){
+							newCount.charTotal++;
+						}
+					}
+					msgLenMap.put(msg.getSender(), newCount);
 				}
 			}
 		}
 		
-		Set<String> keys = map.keySet();
+		Set<String> keys = msgLenMap.keySet();
 		System.out.println(keys);
 		
 		
@@ -68,10 +84,10 @@ public class Conversation {
 		PrintWriter writer = null;
 		try{
 			writer = new PrintWriter(new File(fileName));
-			writer.println("user, avg msg length, total messages, total word count");
+			writer.println("user, avg msg length, total messages, total word count, total chars");
 			for (String s : keys) {
 				writer.print(s + ",");
-				writer.println(map.get(s).getAvg() + "," + map.get(s).msgCount + "," + map.get(s).wordTotal);
+				writer.println(msgLenMap.get(s).getAvg() + "," + msgLenMap.get(s).msgTotal + "," + msgLenMap.get(s).wordTotal + "," + msgLenMap.get(s).charTotal);
 				
 			}
 			
@@ -89,7 +105,7 @@ public class Conversation {
 		}
 
 		
-		HashMap<String, MessageTimes> map = new HashMap<String, MessageTimes>();
+		
 		
 		for(int i = 0; i < threads.size(); i++){
 			for(int j = 0; j < threads.get(i).getMessageCount(); j++){
@@ -97,14 +113,14 @@ public class Conversation {
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(msg.getStrTZ()));
 				cal.setTime(msg.getDate());
 				
-				if(map.get(msg.getSender()) != null){
-					MessageTimes existingTime = map.get(msg.getSender());
+				if(hotspotMap.get(msg.getSender()) != null){
+					MessageTimes existingTime = hotspotMap.get(msg.getSender());
 					existingTime.weekHrMsgs[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
-					map.put(msg.getSender(), existingTime);
+					hotspotMap.put(msg.getSender(), existingTime);
 				} else{
 					MessageTimes newTime = new MessageTimes(msg.getSender());
 					newTime.weekHrMsgs[cal.get(Calendar.HOUR_OF_DAY) + 24 * (cal.get(Calendar.DAY_OF_WEEK) - 1)]++;
-					map.put(msg.getSender(), newTime);
+					hotspotMap.put(msg.getSender(), newTime);
 				}
 			}
 		}
@@ -114,7 +130,7 @@ public class Conversation {
 		AllMessages.createStatsDirs("/" + fName);
 		String fileName = "fb-messages/stats/" + fName + "/" + fName + "_weekly per hr.csv";
 		
-		Set<String> keys = map.keySet();
+		Set<String> keys = hotspotMap.keySet();
 		PrintWriter writer = null;
 		String daysOfWeek[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 		try{
@@ -129,7 +145,7 @@ public class Conversation {
 			for (String s : keys) {
 				writer.println();
 				writer.print(s + ",");			
-				long[] msgTimes = map.get(s).weekHrMsgs;
+				long[] msgTimes = hotspotMap.get(s).weekHrMsgs;
 				for(int i = 0; i < msgTimes.length; i++){
 					writer.print(msgTimes[i] + ",");
 				}
@@ -150,7 +166,7 @@ public class Conversation {
 			for (String s : keys) {
 				writer.println();
 				writer.print(s + ",");			
-				long[] msgTimes = map.get(s).getDayHrMsgs();
+				long[] msgTimes = hotspotMap.get(s).getDayHrMsgs();
 				for(int i = 0; i < msgTimes.length; i++){
 					writer.print(msgTimes[i] + ",");
 				}
@@ -186,22 +202,6 @@ public class Conversation {
 		}
 		
 		return partsString;
-	}
-}
-
-class MessageCounts{
-	public String User;
-	public long msgCount = 0;
-	public long wordTotal = 0;
-
-	
-	public MessageCounts(String user){
-		this.User = user;
-	}
-	
-	public double getAvg(){
-		double avg = (double)wordTotal/(double)msgCount;
-		return avg;
 	}
 }
 

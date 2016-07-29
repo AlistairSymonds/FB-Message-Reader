@@ -34,7 +34,6 @@ public class MessageThread {
 	
 	public void addMessage(Message inMsg){
 		messages.add(inMsg);
-		//inMsg.printMsgToConsole();
 	}
 	
 	public void printThread(){
