@@ -12,16 +12,16 @@
     <string></string>
 
     <key>CFBundleIdentifier</key>
-    <string>com.jar2app.example.fb-mr-mac</string>
+    <string>com.jar2app.example.FB-Message-Reader-mac</string>
 
     <key>CFBundleDisplayName</key>
-    <string>fb-mr-mac</string>
+    <string>FB-Message-Reader-mac</string>
 
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
 
     <key>CFBundleName</key>
-    <string>fb-mr-mac</string>
+    <string>FB-Message-Reader-mac</string>
 
     <key>CFBundlePackageType</key>
     <string>APPL</string>

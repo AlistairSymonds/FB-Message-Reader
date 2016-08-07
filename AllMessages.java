@@ -42,6 +42,10 @@ public class AllMessages {
 			allConvos.get(i).generateHotspots();
 		}
 		
+		for(int i = 0; i< allConvos.size(); i++){
+			allConvos.get(i).whoStartedIt();
+		}
+		
 		generateTopPeople();
 	}
 	

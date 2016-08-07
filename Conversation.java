@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -41,6 +42,52 @@ public class Conversation {
 	public ArrayList<MessageThread> getThreads(){
 		return this.threads;
 	}
+	public void whoStartedIt(){
+		HashMap<String, Long> convosStarted = new HashMap<String, Long>();
+		for(int i = 0; i < threads.size(); i++){
+			for(int j = 1; j < threads.get(i).getMessageCount(); j++){
+				if(threads.get(i).getMessage(j).isChatStarter(threads.get(i).getMessage(j - 1))){
+					if (convosStarted.get(threads.get(i).getMessage(j).getSender()) != null){
+						long currentVal = convosStarted.get(threads.get(i).getMessage(j).getSender()).longValue();
+						currentVal++;
+						Long value = new Long(currentVal);
+						convosStarted.put(threads.get(i).getMessage(j).getSender(), value);
+					} else {
+						Long value = new Long(1);
+						convosStarted.put(threads.get(i).getMessage(j).getSender(), value);
+					} 
+				}
+			}
+		}
+		System.out.println("Someone started it");
+		
+		Set<String> keys = convosStarted.keySet();
+		System.out.println(keys);
+		
+		
+		
+		
+		String fName = createFolderName();
+		AllMessages.createStatsDirs("/" + fName);
+		String fileName = "fb-messages/stats/" + fName + "/" + fName + "_convos started.csv";
+		
+		PrintWriter writer = null;
+		try{
+			writer = new PrintWriter(new File(fileName));
+			writer.println("user, convos started");
+			for (String s : keys) {
+				writer.println(s + "," + convosStarted.get(s));
+				
+			}
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		writer.close();
+		
+	}
+	
 	
 	public void generateMsgAvgLengths(){
 		

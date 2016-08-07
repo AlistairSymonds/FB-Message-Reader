@@ -68,15 +68,23 @@ public class Message {
 		System.out.println();
 		System.out.println();
 		for (int j = 0; j < msgTextSplit.length; j++){
-			//for (int i = 0; i < width; i++){
 				System.out.print(msgTextSplit[j] + " ");
-			//}
-		//System.out.println();
 		}
 		
 		System.out.println();
 		System.out.println("=============================");
 		System.out.println();
+	}
+	
+	public boolean isChatStarter(Message other){
+		long deltaTime = this.getDate().getTime() - other.getDate().getTime();
+		deltaTime = Math.abs(deltaTime);
+		if (deltaTime > 54000000){
+			System.out.println("Its a starter");
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
