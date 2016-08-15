@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 public class Conversation {
 	private ArrayList<String> participants = new ArrayList<String>();
@@ -150,10 +152,6 @@ public class Conversation {
 		if (threads.isEmpty()){
 			return;
 		}
-
-		
-		
-		
 		for(int i = 0; i < threads.size(); i++){
 			for(int j = 0; j < threads.get(i).getMessageCount(); j++){
 				Message msg = threads.get(i).getMessage(j);
@@ -198,6 +196,8 @@ public class Conversation {
 				}
 				
 			}
+			
+			writer.close();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -224,6 +224,124 @@ public class Conversation {
 		}
 		
 		writer.close();
+		
+		
+	}
+	
+	public void generateAllTimeActivity(){
+		if(threads.isEmpty()){
+			return;
+		}
+		
+		HashMap<String, HashMap<String, taggedAL>> msgDateMap = new HashMap<String, HashMap<String, taggedAL>>();
+		Set<String> ConsistentKeySet = new TreeSet<String>();
+		for(int i = 0; i < threads.size(); i++){
+			for(int j = 0; j < threads.get(i).getMessageCount(); j++){
+				
+				Message msg = threads.get(i).getMessage(j);
+				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(msg.getStrTZ()));
+				cal.setTime(msg.getDate());
+				String dateKey = (cal.get(Calendar.DAY_OF_MONTH) + "-" + (cal.get(Calendar.MONTH)+1) +"-" + cal.get(Calendar.YEAR));
+				HashMap<String, taggedAL> messagesOnDay = new HashMap<String, taggedAL>();
+				
+				if(msgDateMap.get(dateKey) == null){					
+					
+					taggedAL newTaggedAL = new taggedAL(msg.getSender());
+					newTaggedAL.messages.add(msg);
+					messagesOnDay.put(msg.getSender(), newTaggedAL);
+					msgDateMap.put(dateKey, messagesOnDay);
+					
+				} else {
+					messagesOnDay = msgDateMap.get(dateKey);
+					if(messagesOnDay.get(msg.getSender()) == null){
+						taggedAL newTaggedAL = new taggedAL(msg.getSender());
+						newTaggedAL.messages.add(msg);
+						messagesOnDay.put(msg.getSender(), newTaggedAL);
+						
+					} else{
+						taggedAL existingTaggedAL = messagesOnDay.get(msg.getSender());
+						existingTaggedAL.messages.add(msg);
+						messagesOnDay.put(msg.getSender(), existingTaggedAL);
+					}
+					msgDateMap.put(dateKey, messagesOnDay);
+					
+				}
+				
+				ConsistentKeySet.addAll(messagesOnDay.keySet());
+				
+			}
+		}
+		
+
+		Calendar cal = null;
+		boolean calSet = false;
+		for(int i = 0; i < threads.size(); i++){
+			if(threads.get(i).getMessageCount() > 0){
+				cal = Calendar.getInstance(TimeZone.getTimeZone(threads.get(i).getMessage(0).getStrTZ()));
+				calSet = true;
+			}
+		}
+		
+		if(!calSet){
+			cal = Calendar.getInstance(TimeZone.getDefault());
+		}
+		
+		
+		
+		
+		
+		boolean foundFirstMessage = false;
+		cal.setTimeInMillis(1000);
+		
+		findFirst:
+		while(cal.getTime().getTime() < System.currentTimeMillis()){
+			cal.add(Calendar.DATE, 1);
+			String dateKey = (cal.get(Calendar.DAY_OF_MONTH) + "-" + (cal.get(Calendar.MONTH)+1) +"-" + cal.get(Calendar.YEAR));
+			if(msgDateMap.get(dateKey) != null){
+				break findFirst;
+			}
+		}
+		final Date firstMsgDate = cal.getTime();
+		
+		String fName = createFolderName();
+		AllMessages.createStatsDirs("/" + fName);
+		String fileName = "fb-messages/stats/" + fName + "/" + fName + "_day activity.csv";
+		
+		PrintWriter writer;
+		try{
+			writer = new PrintWriter(new File(fileName));
+			while(cal.getTime().getTime() < System.currentTimeMillis()){
+				
+				String dateKey = (cal.get(Calendar.DAY_OF_MONTH) + "-" + (cal.get(Calendar.MONTH)+1) +"-" + cal.get(Calendar.YEAR));
+				writer.print(","+dateKey);
+				cal.add(Calendar.DATE, 1);
+			}
+		
+			for(String s : ConsistentKeySet){
+				cal.setTime(firstMsgDate);
+				writer.println();
+				writer.print(s);
+				while(cal.getTime().getTime() < System.currentTimeMillis()){
+					String dateKey = (cal.get(Calendar.DAY_OF_MONTH) + "-" + (cal.get(Calendar.MONTH)+1) +"-" + cal.get(Calendar.YEAR));
+					
+					if(msgDateMap.get(dateKey) != null){
+						if(msgDateMap.get(dateKey).get(s) != null){
+							writer.print("," + msgDateMap.get(dateKey).get(s).messages.size());
+						} else {
+							writer.print(",0");
+						}
+					} else {
+						writer.print(",0");
+					}
+					cal.add(Calendar.DATE, 1);
+				}
+			}
+			writer.close();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		
 		
 		
 	}
@@ -269,3 +387,15 @@ class MessageTimes{
 		return dayHrMsgs;
 	}
 }
+
+class taggedAL{
+	public String User;
+	public ArrayList<Message> messages;
+	
+	public taggedAL(String user){
+		this.User = user;
+		messages = new ArrayList<Message>();
+	}
+}
+
+

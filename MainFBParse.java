@@ -5,7 +5,7 @@ import java.nio.file.*;
 
 public class MainFBParse {
 	
-	public static String scanAll (String filePath, boolean generateStats){
+	public static String scanAll (String filePath, boolean generateStats, long dateStart, long dateFinish){
 		
 		MessageThread.setThreadCount(0);
 		File file = new File(filePath);
@@ -213,7 +213,10 @@ public class MainFBParse {
 							finalMsgText = finalMsgText + " " + msgText.get(i);
 						}
 						msg.setText(finalMsgText);
-						thread.addMessage(msg);
+						if(msg.getDate().getTime() > dateStart && msg.getDate().getTime() < dateFinish){
+							thread.addMessage(msg);
+						}
+
 						msgTagOpen = false;		
 						
 						

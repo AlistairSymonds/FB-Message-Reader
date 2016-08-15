@@ -94,28 +94,30 @@ public class MessageThread {
 		threadNumber++;
 
 		PrintWriter writer = null;
-		
-		try {
-			writer = new PrintWriter(new File(fileName));
-			if(participants.size() > 2){
-				writer.println("Group conversation, participants at time of download: ");
-				for(int i = 0; i < participants.size(); i++){
-					writer.println(participants.get(i));
+		if(messages.size() > 0){
+			try {
+				writer = new PrintWriter(new File(fileName));
+				if(participants.size() > 2){
+					writer.println("Group conversation, participants at time of download: ");
+					for(int i = 0; i < participants.size(); i++){
+						writer.println(participants.get(i));
+					}
+					
+					writer.println("(This list does not contain those who have left the group chat, "); 
+					writer.println("however their messages will still appear below)");
+					writer.println();
 				}
-				
-				writer.println("(This list does not contain those who have left the group chat, "); 
-				writer.println("however their messages will still appear below)");
-				writer.println();
+				for(int i = messages.size() - 1; i >= 0; i--){
+					writer.println(messages.get(i).getSender() + " --- " + printFt.format(messages.get(i).getDate()));
+					writer.println(messages.get(i).getText());
+					writer.println();
+				}
+				writer.close();
+			} catch (Exception e){
+				System.out.println(e.toString());
 			}
-			for(int i = messages.size() - 1; i >= 0; i--){
-				writer.println(messages.get(i).getSender() + " --- " + printFt.format(messages.get(i).getDate()));
-				writer.println(messages.get(i).getText());
-				writer.println();
-			}
-			writer.close();
-		} catch (Exception e){
-			System.out.println(e.toString());
 		}
+		
 	}
 
 	public int getMessageCount() {

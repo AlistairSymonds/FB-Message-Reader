@@ -46,6 +46,10 @@ public class AllMessages {
 			allConvos.get(i).whoStartedIt();
 		}
 		
+		for(int i = 0; i < allConvos.size(); i++){
+			allConvos.get(i).generateAllTimeActivity();
+		}
+		
 		generateTopPeople();
 	}
 	
