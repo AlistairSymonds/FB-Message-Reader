@@ -38,11 +38,10 @@
 
 <h3><a id="making-sense-of-the-results" class="anchor" href="#making-sense-of-the-results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Making sense of the results</h3>
 
-<p>Each file name takes one of three formats:</p>
+<h4>Message Threads</h4>
+<p>Each file name takes one of two formats:</p>
 
 <ol>
-<li><p>EMPTY THREAD - Simply a message thread which didn't contain any messages</p></li>
-<br>
 <li><p><em>first name last name</em> - A two person conversation, just listing the other person's name</p></li>
 <p><img src="https://raw.githubusercontent.com/Sayfog/FB-Message-Reader/gh-pages/images/two_person_output.PNG" alt="Two Person Thread"></p>
 <br>
@@ -53,6 +52,14 @@
 <p>At the end of each file is a number which is simply where the thread was in the original messages.htm file</p>
 
 <p>For non-empty message threads it also lists the date of the last message in that thread.</p>
+
+<h4>Stats</h4>
+<p>Each conversation (threads which had the same participants at the time of download are combined into one conversation)
+has five files (of .csv variety, it is recommended to open these in Excel) of statistics generated about the conversation.</p>
+<ul>
+<li><p><em>conversation name</em>_avg msg length - For each participant, it details: average message length, total messages sent, total words and total characters sent</p></li>
+<li><p></p></li>
+</ul>
 
 
 
