@@ -13,3 +13,6 @@ Firstly it involved setting up python and downloading multiple requiste librarie
 Secondly and more to the point these both (I assume) try to parse the whole document as an html file, which in my case (a 65mb file) results in the program eating up memory before it eventually fails.
 
 Contrasting that with mine it can finish before the alternatives have had the chance even eat up a gigabyte of RAM!
+
+
+One final note, this was a quick hackjob made for personal use, so if you have any suggestions for improvements, I am all ears. 
