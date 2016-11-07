@@ -2,7 +2,7 @@
 A java program designed to take input from the messages.htm (found when you download a copy of your fb profile)  file and output it in a more human readable manner.
 
 If you just want to use the prgram and read your messages easily, please click on the following link:
-https://sayfog.github.io/FB-Message-Reader/
+https://alistairsymonds.github.io/FB-Message-Reader/
 
 
 Why a new program when other options exists? 
